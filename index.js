@@ -17,47 +17,45 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+  res.send('Hello World');
 });
 
 
-app.get('/create', async (req, res) => {
-    const client = new Client()
-        .setEndpoint('https://cloud.appwrite.io/v1')
-        .setProject('66f3c2520025bb651143');
+// app.get('/create', async (req, res) => {
+//   const client = new Client()
+//     .setEndpoint('https://cloud.appwrite.io/v1')
+//     .setProject('66f3c2520025bb651143');
 
-    const databases = new Databases(client);
+//   const databases = new Databases(client);
 
-    try {
-        const response = await databases.createDocument(
-            '66f3c2e1001bd15c52eb',
-            '66f3c42000207aa520cf',
-            ID.unique(),
-            { url: "https://www.microsoft.com" }
-        );
+//   try {
+//     const response = await databases.createDocument(
+//       '66f3c2e1001bd15c52eb',
+//       '66f3c42000207aa520cf',
+//       ID.unique(),
+//       { url: "https://www.microsoft.com" }
+//     );
 
-        console.log('Document created:', response);
-        res.status(201).json({ message: 'Document created successfully', document: response });
-    } catch (error) {
-        console.error('Error creating document:', error);
-        res.status(500).json({ message: 'Error creating document', error: error.message });
-    }
-});
+//     console.log('Document created:', response);
+//     res.status(201).json({ message: 'Document created successfully', document: response });
+//   } catch (error) {
+//     console.error('Error creating document:', error);
+//     res.status(500).json({ message: 'Error creating document', error: error.message });
+//   }
+// });
 
 app.get('/publishers', async (req, res) => {
-    const { click_id, publisher_id, campaign_id, source, aff_click_id } = req.query;
+  const { click_id, publisher_id, campaign_id, source, aff_click_id } = req.query;
 
 
-    console.log(click_id, publisher_id, campaign_id, source, aff_click_id);
-    res.status(200).json({ status_publishers: 'success' });
+  console.log(click_id, publisher_id, campaign_id, source, aff_click_id);
+  res.status(200).json({ status_publishers: 'success' });
 });
-
-
 
 
 
 // Postback route
-app.post('/postbacks/appexco', async (req, res) => {
+app.get('/postbacks/appexco', async (req, res) => {
   // Extracting the data from the request query parameters -------------------------------------
   const { click_id, publisher_id, campaign_id, source, aff_click_id } = req.query;
 
@@ -68,7 +66,7 @@ app.post('/postbacks/appexco', async (req, res) => {
 
   // Process the data (example: just logging for now)
   console.log(`Received postback: click_id=${click_id}, publisher_id=${publisher_id}, ` +
-              `campaign_id=${campaign_id}, source=${source}, aff_click_id=${aff_click_id}`);
+    `campaign_id=${campaign_id}, source=${source}, aff_click_id=${aff_click_id}`);
 
   // Here we would typically update our database or perform other actions -------------------------
 
@@ -77,11 +75,14 @@ app.post('/postbacks/appexco', async (req, res) => {
   // 2. now find the entire url (url field) from the database using the campaign_id
   // 3. now hit that url with the given query parameters.
 
-  // Import axios at the top of your file if not already imported
-  // const axios = require('axios');
 
-  // Construct the URL with query parameters
-  const baseUrl = "http://localhost:3000/publishers"; // Replace with your actual base URL
+  // http://localhost:3000/postbacks/appexco?click_id={click_id}&publisher_id=BoB123&campaign_id={campaign_id}&source={source}&aff_click_id={aff_click_id}
+  // http://localhost:3000/postbacks/appexco?click_id=12345&publisher_id=BoB123&campaign_id=CAMP001&source=facebook&aff_click_id=AFF789"
+
+
+
+  // Construct the URL with query parameters -------------------------------------------------------
+  const baseUrl = "http://localhost:4000/publishers"; // Replace with actual base URL
   const urlWithParams = new URL(baseUrl);
   urlWithParams.searchParams.append('click_id', click_id);
   urlWithParams.searchParams.append('publisher_id', publisher_id);
@@ -99,8 +100,9 @@ app.post('/postbacks/appexco', async (req, res) => {
 
   // Return a success response
   res.status(200).json({ status: 'success' });
-  console.log('Postback received successfully');
+  console.log('Postback received succesfully');
 });
+
 
 
 app.listen(port, () => {
